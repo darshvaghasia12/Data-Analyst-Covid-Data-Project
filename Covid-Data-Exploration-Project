@@ -1,0 +1,140 @@
+select *  
+From Covid19Project..CovidDeaths
+Where Continent is not null
+order by 3,4;
+
+-- select *  
+-- From Covid19Project..CovidVaccinations
+-- order by 3,4;
+
+-- Select Data that we are going to be using
+
+select Location, date, total_cases, new_cases, total_deaths, population  
+From Covid19Project..CovidDeaths
+Where Continent is not null
+order by 1, 2
+
+-- Looking at the Total Cases vc Total Deaths
+-- Shows likelihood of sying if you contract covid in your country
+select Location, date, total_cases, total_deaths, CAST(total_deaths AS FLOAT) / CAST(total_cases AS FLOAT)*100 as DeathPercentage
+From Covid19Project..CovidDeaths
+Where location like '%states%' and  Continent is not null
+order by 1, 2
+
+-- Looking at Total Cases vs Population
+-- shows what percentage of population has got covid
+select Location, date, total_cases, population, CAST(total_cases AS FLOAT) / CAST(population AS FLOAT)*100 as PercentagePopulationInfected
+From Covid19Project..CovidDeaths
+Where Continent is not null
+-- Where location like '%states%'
+order by 1, 2
+
+-- Looking at What country has the highest infection rate compared to population
+select Location, MAX(total_cases) as HighestInfectionCount, population, MAX(CAST(total_cases AS FLOAT) / CAST(population AS FLOAT))*100 as PercentagePopulationInfected
+From Covid19Project..CovidDeaths
+-- Where location like '%states%'
+Group by Location, population
+order by PercentagePopulationInfected desc;
+
+-- LET'S BREAK THINGS DOWN BY CONTINENT
+
+
+-- Showing Countries with the highest death count per population
+-- Showing continents with the highest death count per population
+select continent, MAX(total_deaths) AS TotalDeathCount
+From Covid19Project..CovidDeaths
+Where continent is not null
+Group by continent
+order by TotalDeathCount desc;
+
+
+-- GLOBAL NUMBERS
+select SUM(new_cases) as total_cases, SUM(new_deaths) as total_deaths, CAST(SUM(new_deaths) AS FLOAT)/CAST(SUM(new_cases) AS FLOAT)*100 AS DeathPercentage--, total_deaths, CAST(total_deaths AS FLOAT) / CAST(total_cases AS FLOAT)*100 as DeathPercentage
+From Covid19Project..CovidDeaths
+Where continent is not null
+--Where location like '%states%' and  Continent is not null
+--Group by date
+order by 1, 2
+
+-- Looking Over Covid Vaccinations
+select * 
+From Covid19Project..CovidVaccinations
+
+--- Joining Two Tables
+select *
+From Covid19Project..CovidDeaths dea
+JOIN Covid19Project..CovidVaccinations vac
+    on dea.location = vac.location
+    and dea.date = vac.date;
+
+
+-- Looking at Total Population  vs Vaccinations
+select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.location Order by dea.location, dea.date) as RollingPeopleVaccinated
+-- , (RollingPeopleVaccinated/Population)*100 We Cannot use the variable that we just created
+From Covid19Project..CovidDeaths dea
+JOIN Covid19Project..CovidVaccinations vac
+    on dea.location = vac.location
+    and dea.date = vac.date
+where dea.continent is not null
+order by 2,3
+
+-- USE CTE
+with PopsvsVac(continent, location, date, Population, New_Vaccinations, RollingPeopleVaccinated)
+as
+(
+    select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.location Order by dea.location, dea.date) as RollingPeopleVaccinated
+-- , (RollingPeopleVaccinated/Population)*100 We Cannot use the variable that we just created
+From Covid19Project..CovidDeaths dea
+JOIN Covid19Project..CovidVaccinations vac
+    on dea.location = vac.location
+    and dea.date = vac.date
+where dea.continent is not null
+--order by 2,3
+)
+Select *, Convert(float,RollingPeopleVaccinated)/Convert(float,Population)*100
+from PopsvsVac
+ 
+
+
+ -- TEMP TABLE
+
+drop table if exists #PercentPopulationVaccinated
+Create Table #PercentPopulationVaccinated
+(
+    continent nvarchar(255),
+    location nvarchar(255),
+    Date datetime,
+    population NUMERIC,
+    new_vaccinations numeric,
+    RollingPeopleVaccinated numeric
+)
+ Insert into #PercentPopulationVaccinated
+select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.location Order by dea.location, dea.date) as RollingPeopleVaccinated
+-- , (RollingPeopleVaccinated/Population)*100 We Cannot use the variable that we just created
+From Covid19Project..CovidDeaths dea
+JOIN Covid19Project..CovidVaccinations vac
+    on dea.location = vac.location
+    and dea.date = vac.date
+where dea.continent is not null
+--order by 2,3
+Select *, Convert(float,RollingPeopleVaccinated)/Convert(float,Population)*100
+from #PercentPopulationVaccinated
+
+
+
+-- Creating View to store data for later visualizations
+
+create view PercentPopulationVaccinated as 
+select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.location Order by dea.location, dea.date) as RollingPeopleVaccinated
+-- , (RollingPeopleVaccinated/Population)*100 We Cannot use the variable that we just created
+From Covid19Project..CovidDeaths dea
+JOIN Covid19Project..CovidVaccinations vac
+    on dea.location = vac.location
+    and dea.date = vac.date
+where dea.continent is not null
+--order by 2,3
+
+select *
+FROM PercentPopulationVaccinated
+
+-- CREATE VIEWS for ALL
