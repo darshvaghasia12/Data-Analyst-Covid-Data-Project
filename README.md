@@ -37,9 +37,6 @@
   <h2>Contributing</h2>
   <p>If you'd like to contribute to this repository, feel free to fork the project and submit a pull request with your enhancements or additional projects.</p>
 
-  <h2>License</h2>
-  <p>This repository is licensed under the <a href="LICENSE">MIT License</a>.</p>
-
   <h2>Contact</h2>
   <p>For any questions or feedback regarding these projects, please contact <a href="mailto:darshvaghasia@icloud.com">Darsh Maheshkumar Vaghasia</a>.</p>
 </body>
