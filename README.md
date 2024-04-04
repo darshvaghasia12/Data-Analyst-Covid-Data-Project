@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COVID Data Analytics Projects</title>
 </head>
 <body>
   <h1>COVID Data Analytics Projects</h1>
