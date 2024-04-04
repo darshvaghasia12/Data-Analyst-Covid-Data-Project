@@ -1,4 +1,4 @@
-COVID Data Analytics Projects
+<h1>COVID Data Analytics Projects</h1>
 
 Overview
 
