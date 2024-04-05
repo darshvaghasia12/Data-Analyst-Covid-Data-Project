@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <h1>COVID Data Analytics Projects</h1>
+  <h1>COVID Data Analytics Project</h1>
 
   <h2>Overview</h2>
   <p>This repository contains COVID data analytics projects utilizing Tableau dashboards and SQL queries on Microsoft SQL Server. These projects aim to provide insights into various aspects of the COVID-19 pandemic by analyzing and visualizing data from reliable sources.</p>
