@@ -12,6 +12,7 @@
 
   <h2>Tableau Dashboards</h2>
   <p>The Tableau dashboards included in this repository offer interactive visualizations that allow users to explore COVID-19 data in different dimensions. These visualizations help in understanding trends, patterns, and correlations within the data.</p>
+  <img src=""></img>
 
   <h2>SQL Queries</h2>
   <p>The SQL queries provided here are designed to extract, transform, and analyze COVID-19 data stored in Microsoft SQL Server databases. These queries can be used to perform in-depth analysis, generate reports, and derive actionable insights from the data.</p>
